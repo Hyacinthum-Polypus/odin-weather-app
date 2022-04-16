@@ -13,15 +13,20 @@ function printWeatherData()
     const locationInput = document.getElementById('location');
     getLocationWeather(locationInput.value)
     .then(data => {
+        //Print name.
+        document.getElementById('locationName').textContent = data.name;
+        //Print temperature.
         switch(document.querySelector("input[name='temperatureMode']:checked").value)
         {
             case 'celsius':
-                console.log(data.temp - 273.15);
+                document.getElementById('temperature').textContent = `${Math.round(data.temp - 273.15)} degrees celsius`;
             break;
             case 'fahrenheit':
-                console.log(data.temp * 9/5 - 459.67);
+                document.getElementById('temperature').textContent = `${Math.round(data.temp * 9/5 - 459.67)} degrees fahrenheit`;
             break;
         }
+        //Print weather.
+        document.getElementById('description').textContent = data.weather[0].description
     })
 }
 
@@ -87,8 +92,28 @@ function Form() {
     )
 }
 
-document.querySelector('body').appendChild(Title('Query Weather Data!'));
+function weatherDisplay()
+{
+    const display = document.createElement('div');
+    const locationName = document.createElement('h1');
+    locationName.id = 'locationName';
+    display.appendChild(locationName);
+    const temperature = document.createElement('h2');
+    temperature.id = 'temperature';
+    display.appendChild(temperature);
+    const description = document.createElement('h3');
+    description.id = 'description';
+    display.appendChild(description);
 
-document.querySelector('body').appendChild(Form());
+    return (
+        display
+    )
+}
+
+document.body.appendChild(Title('Query Weather Data!'));
+
+document.body.appendChild(Form());
+
+document.body.appendChild(weatherDisplay());
 
 
