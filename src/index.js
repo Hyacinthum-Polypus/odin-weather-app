@@ -8,8 +8,25 @@ function Title(text) {
     )
 }
 
+                                      
+async function getGif(keyword) 
+{
+    const img = document.getElementById('weatherGif');                                       
+    const response = await fetch(`https://api.giphy.com/v1/gifs/translate?api_key=I0XpbFF0RKyNH9exRtSxGl8zShaRnSYk&s=weather ${keyword}`, {mode: 'cors'});
+    response.json().then(response => {    
+        console.log(response.data.images.original.url)
+        img.src = response.data.images.original.url;
+    });                                                                     
+}
+
 function printWeatherData()
 {
+    document.getElementById('locationName').textContent = "Loading";
+    document.getElementById('temperature').textContent = "";
+    document.getElementById('description').textContent = "";
+    document.getElementById('weatherGif').src = "";
+    document.body.style.backgroundColor = "white"
+
     const locationInput = document.getElementById('location');
     getLocationWeather(locationInput.value)
     .then(data => {
@@ -25,8 +42,43 @@ function printWeatherData()
                 document.getElementById('temperature').textContent = `${Math.round(data.temp * 9/5 - 459.67)} degrees fahrenheit`;
             break;
         }
+
+        const temperature = data.temp - 273.15;
+        if(temperature < 0)
+        {
+            document.body.style.backgroundColor = 'darkblue';
+        }
+        else if(temperature < 15)
+        {
+            document.body.style.backgroundColor = 'blue';
+        }
+        else if(temperature < 20)
+        {
+            document.body.style.backgroundColor = 'lightblue';
+        }
+        else if(temperature < 30)
+        {
+            document.body.style.backgroundColor = 'green';
+        }
+        else if(temperature < 40)
+        {
+            document.body.style.backgroundColor = 'yellow';
+        }
+        else if(temperature < 50)
+        {
+            document.body.style.backgroundColor = 'orange';
+        }
+        else
+        {
+            document.body.style.backgroundCOlor = 'red';
+        }
+
         //Print weather.
-        document.getElementById('description').textContent = data.weather[0].description
+        document.getElementById('description').textContent = data.weather;
+        getGif(data.weather);
+    })
+    .catch(() => {
+        document.getElementById('locationName').textContent = "Query failed!";
     })
 }
 
@@ -34,7 +86,7 @@ async function getLocationWeather(location)
 {
     const response = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${location}&APPID=6660b08f87107700a8149f2aa3a03c67`, {mode:'cors'});
     const data = await response.json();
-    return {name: data.name, temp: data.main.temp, weather: data.weather}
+    return {name: data.name, temp: data.main.temp, weather: data.weather[0].description}
 }
 
 function Form() {
@@ -104,6 +156,9 @@ function weatherDisplay()
     const description = document.createElement('h3');
     description.id = 'description';
     display.appendChild(description);
+    const img = document.createElement('img');
+    img.id = 'weatherGif';
+    display.appendChild(img);
 
     return (
         display
