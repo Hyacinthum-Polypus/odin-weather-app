@@ -84,7 +84,7 @@ function printWeatherData()
 
 async function getLocationWeather(location)
 {
-    const response = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${location}&APPID=6660b08f87107700a8149f2aa3a03c67`, {mode:'cors'});
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${location}&APPID=6660b08f87107700a8149f2aa3a03c67`, {mode:'cors'});
     const data = await response.json();
     return {name: data.name, temp: data.main.temp, weather: data.weather[0].description}
 }
